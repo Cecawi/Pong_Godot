@@ -14,3 +14,17 @@ export_credentials.cfg
 .mono/
 data_*/
 mono_crash.*.json
+
+# Fichiers/dossiers générés par Visual Studio / Rider
+bin/
+obj/
+*.user
+*.suo
+*.tmp
+*.log
+.vs/
+.idea/
+
+# Fichiers générés par Godot
+.export/
+mono_crash.*
