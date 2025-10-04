@@ -1,6 +1,6 @@
 ﻿namespace GameCore;
 
-public class Ball
+private class Ball
 {
     
     //calculer le point de collision et déduire l’angle de rebond

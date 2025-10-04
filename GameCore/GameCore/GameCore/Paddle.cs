@@ -1,6 +1,6 @@
 ﻿namespace GameCore;
 
-private class Paddel
+private class Paddle
 {
     //calculer le point de collision et déduire l’angle de rebond
 }
