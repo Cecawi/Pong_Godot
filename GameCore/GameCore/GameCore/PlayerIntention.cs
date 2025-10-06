@@ -2,7 +2,8 @@
 
 public class PlayerIntention
 {
-    public int Move {get;}// -1 = haut, 0 = neutre, 1 = bas
+    //attribut
+    public int Move {get;}// -1 = haut, 0 = neutre, 1 = bas : intention du joueur (lors de l'update)
 
     public PlayerIntention(int m)
     {

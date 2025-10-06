@@ -7,36 +7,36 @@ public class Ball
     //classe collisions/contacts???
     //Vitesse/angle balle (peut être encapsulé dans la position directement)
     
+    //attributs
+    public float X { get; private set; }/// <summary>
+                                        /// // DEMANDER A CHATGPT SI FAUT METTRE EN PRIVE OU PUBLIQUE
+                                        /// </summary>
+    public float Y { get; private set; }
+    public float VelocityX { get; private set; }
+    public float VelocityY { get; private set; }
+    //"taille" du terrain
+    private readonly float fieldWidth;
+    private readonly float fieldHeight;
     
     
+     public (float x, float y) GetPosition()
+     {
+         return (X, Y);
+     }
 
+    //constructeur
+    public Ball(float startX, float startY, float velocityX, float velocityY, float fieldWidth, float fieldHeight);
 
-
-
-namespace GameCore
-{
-    public class Ball
-    {
-         // Ducoup les attributs ici
-        public float X { get; private set; }
-        public float Y { get; private set; }
-        public float VelocityX { get; private set; }
-        public float VelocityY { get; private set; }
-        private readonly float fieldWidth;
-        private readonly float fieldHeight;
-
-        // un constructeur
-        public Ball(float startX, float startY, float velocityX, float velocityY, float fieldWidth, float fieldHeight);
-
-        // les méthodes
-        public void Update(float deltaTime);
-        public void Reset(float startX, float startY, float velocityX, float velocityY);
-        public void BounceFromPaddle(float paddleX, float paddleY, float paddleHeight, bool isLeftPaddle);
-        private void ClampY();
-        public bool IsOutLeft();
-        public bool IsOutRight();
-    }
+    //méthodes
+    public void Update(float deltaTime);
+    public void Reset(float startX, float startY, float velocityX, float velocityY);
+    public void BounceFromPaddle(float paddleX, float paddleY, float paddleHeight, bool isLeftPaddle);//va faire "rebondir la balle d'une certaine manière par rapport à l'angle d'impacte
+    private void ClampY();//si la balle touche le bord huet ou bas : balle renvoyée vers terrain
+    public bool IsOutLeft();//but : point pour joueur à droite
+    public bool IsOutRight();//but : point pour joueur à gauche
+    
 }
+
 
 
 
