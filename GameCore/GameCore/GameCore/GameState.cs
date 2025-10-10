@@ -10,7 +10,7 @@ public class GameState
 
     public GameState()
     {
-        _b = new Ball();/////
+        _b = new Ball();/////PARAMETRES (à voir)
         _p1 = new Paddle(1);
         _p2 = new Paddle(2);
         _score = new Score();
