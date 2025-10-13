@@ -8,13 +8,15 @@ public class GameState
     private readonly Paddle _p2;
     private Score _score;
     private bool _isGameOver;
+    private float _fieldWidth = 1000;
+    private float _fieldHeight = 600;
 
     public GameState()
     {
         //_b = new Ball();/////PARAMETRES (à voir)
-        _b = new Ball(400, 300, 3, 5, 5, 800, 600);
-        _p1 = new Paddle(100, 250, 3, 100, 5, 600);
-        _p2 = new Paddle(700, 250, 3, 100, 5, 600);
+        _b = new Ball(_fieldWidth / 2, _fieldHeight / 2, 3, 100, 100, _fieldWidth, _fieldHeight);
+        _p1 = new Paddle(100, _fieldHeight / 2 - 50, 3, 100, 100, _fieldHeight);
+        _p2 = new Paddle(_fieldWidth - 100 - 2, _fieldHeight / 2 - 50, 3, 100, 100, _fieldHeight);
         _score = new Score();
         _isGameOver = false;
     }
@@ -61,8 +63,9 @@ public class GameState
     //réinitialise la balle après un point
     private void ResetBall(bool directionToRight)
     {
-        float vx = directionToRight ? 5 : -5;
-        _b.Reset(400, 300, vx, 5);
+        float vx = directionToRight ? 100 : -100;
+        float vy = (float)(new Random().NextDouble() * 200 - 100); //-100 à +100
+        _b.Reset(_fieldWidth / 2, _fieldHeight / 2, vx, vy);
     }
 
     public (float x, float y) GetBallPosition()//(float x, float y) : vecteur, position x, y
@@ -70,9 +73,19 @@ public class GameState
         return _b.GetPosition();
     }
 
-    public (float y1, float y2) GetPaddlePositions()
+    public (float y1, float y2) GetPaddlesYPosition()
     {
         return (_p1.Y, _p2.Y);
+    }
+    
+    public (float x1, float y1) GetPaddle1Position()
+    {
+        return (_p1.X, _p1.Y);
+    }
+    
+    public (float x1, float y1) GetPaddle2Position()
+    {
+        return (_p2.X, _p2.Y);
     }
     
     public (int p1, int p2) GetScore()

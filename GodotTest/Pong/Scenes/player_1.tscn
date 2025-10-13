@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://escaijd1ygw2"]
+
+[ext_resource type="Script" uid="uid://dpdfmabpgkm5c" path="res://Scripts/Main.cs" id="1_p0e4v"]
+[ext_resource type="Texture2D" uid="uid://b164ttoiu7pnc" path="res://Assets/ball.png" id="2_c4k0l"]
+[ext_resource type="Texture2D" uid="uid://docjn3juy4nln" path="res://Assets/paddle.png" id="2_p0e4v"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_p0e4v")
+
+[node name="Ball" type="Area2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Ball"]
+texture = ExtResource("2_c4k0l")
+
+[node name="Paddle1" type="Area2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Paddle1"]
+texture = ExtResource("2_p0e4v")
+
+[node name="Paddle2" type="Area2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Paddle2"]
+texture = ExtResource("2_p0e4v")

@@ -6,5 +6,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\GameCore\GameCore\GameCore\GameCore.csproj" />
+    <ProjectReference Include="..\..\Tests\TestSolution\TestSolution\TestSolution.csproj" />
   </ItemGroup>
 </Project>

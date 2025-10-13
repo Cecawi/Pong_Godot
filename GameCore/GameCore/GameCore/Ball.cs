@@ -60,24 +60,34 @@ public class Ball
     
     public void BounceFromPaddle(float paddleX, float paddleY, float paddleHeight, bool isLeftPaddle)
     {
-        if(Y + Radius >= paddleY && Y - Radius <= paddleY + paddleHeight)
+        // On ne rebondit que si la balle est alignée verticalement ET touche le paddle en X
+        bool verticallyAligned = Y + Radius >= paddleY && Y - Radius <= paddleY + paddleHeight;
+
+        if (isLeftPaddle)
         {
-            if(isLeftPaddle && X - Radius <= paddleX)
+            if (verticallyAligned && X - Radius <= paddleX)
             {
                 //rebond sur la raquette gauche
                 VelocityX = Math.Abs(VelocityX);
                 X = paddleX + Radius;
+
+                //modifie légèrement la direction verticale selon le point d'impact
+                float hitPos = (Y - (paddleY + paddleHeight / 2)) / (paddleHeight / 2);
+                VelocityY = hitPos * Math.Abs(VelocityX);
             }
-            if(!isLeftPaddle && X + Radius >= paddleX)
+        }
+        else
+        {
+            if (verticallyAligned && X + Radius >= paddleX)
             {
                 //rebond sur la raquette droite
                 VelocityX = -Math.Abs(VelocityX);
                 X = paddleX - Radius;
-            }
 
-            //modifie légèrement la direction verticale selon le point d'impact
-            float hitPos = (Y - (paddleY + paddleHeight / 2)) / (paddleHeight / 2);
-            VelocityY = hitPos * Math.Abs(VelocityX);
+                //modifie légèrement la direction verticale selon le point d'impact
+                float hitPos = (Y - (paddleY + paddleHeight / 2)) / (paddleHeight / 2);
+                VelocityY = hitPos * Math.Abs(VelocityX);
+            }
         }
     }
     
