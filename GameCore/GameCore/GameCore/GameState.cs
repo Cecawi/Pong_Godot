@@ -10,9 +10,10 @@ public class GameState
 
     public GameState()
     {
-        _b = new Ball();/////PARAMETRES (à voir)
-        _p1 = new Paddle(1);
-        _p2 = new Paddle(2);
+        //_b = new Ball();/////PARAMETRES (à voir)
+        _b = new Ball(400, 300, 3, 5, 5, 800, 600);
+        _p1 = new Paddle(100, 250, 3, 100, 5, 600);
+        _p2 = new Paddle(700, 250, 3, 100, 5, 600);
         _score = new Score();
     }
 
@@ -28,7 +29,12 @@ public class GameState
 
     public (float y1, float y2) GetPaddlePositions()
     {
-        return (_p1.GetPosition(), _p2.GetPosition());
+        if (_p1 != null && _p2 != null)
+        {
+            return (_p1.Y, _p2.Y);
+        }
+        // Valeur par défaut si jamais l’un des paddles n’existe pas
+        return (0f, 0f);
     }
     public (int p1, int p2) GetScore()
     {

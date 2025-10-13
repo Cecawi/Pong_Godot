@@ -25,11 +25,11 @@
             _fieldHeight = fieldHeight;
         }
 
-        // méthode pour récupérer la position
-        public (float x, float y) GetPosition()
+        // méthode pour récupérer la position///////////////
+        /*public (float x, float y) GetPosition()
         {
             return (X, Y);
-        }
+        }*/
 
         // méthode pour déplacer la raquette vers le haut
         public void MoveUp(float deltaTime)
