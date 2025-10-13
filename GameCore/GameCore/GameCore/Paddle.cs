@@ -1,7 +1,7 @@
 ﻿namespace GameCore
 {
     // objectif : représenter une raquette (paddle) pour un joueur
-    // à voir : ne pas avoir de conflit avec le ball.cs
+    // gère le déplacement vertical et empêche de sortir du terrain
     public class Paddle
     {
         // attributs
@@ -25,13 +25,20 @@
             _fieldHeight = fieldHeight;
         }
 
-        // méthode pour récupérer la position///////////////
-        /*public (float x, float y) GetPosition()
+        // méthode pour récupérer la position
+        public (float x, float y) GetPosition()
         {
             return (X, Y);
-        }*/
+        }
 
-        // méthode pour déplacer la raquette vers le haut
+        // déplace la raquette verticalement selon la direction donnée (-1 = haut, 0 = neutre, 1 = bas)
+        public void Move(int intention, float deltaTime)
+        {
+            Y += intention * Speed * deltaTime;
+            ClampY();
+        }
+        
+        /*// méthode pour déplacer la raquette vers le haut
         public void MoveUp(float deltaTime)
         {
             Y -= Speed * deltaTime;
@@ -43,13 +50,20 @@
         {
             Y += Speed * deltaTime;
             ClampY();
-        }
+        }*/
 
         // méthode pour rester dans le terrain
         private void ClampY()
         {
-            if (Y < 0) Y = 0;
-            if (Y + Height > _fieldHeight) Y = _fieldHeight - Height;
+            if (Y < 0)
+            {
+                Y = 0;
+            }
+
+            if (Y + Height > _fieldHeight)
+            {
+                Y = _fieldHeight - Height;
+            }
         }
     }
 }

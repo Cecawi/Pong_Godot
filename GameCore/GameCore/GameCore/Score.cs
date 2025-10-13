@@ -5,8 +5,8 @@ public class Score
     //attributs
     private int _paddle1Score = 0;////constructeur?
     private int _paddle2Score = 0;
-    private int _paddle1Id = 0;
-    private int _paddle2Id = 1;
+    private  int _paddle1Id = 0;
+    private  int _paddle2Id = 1;
     
     //getters et setters
     public int GetPaddle1Score()
@@ -35,18 +35,17 @@ public class Score
             _paddle2Score++;
         }
     }
-
-    public bool IsGameOver()
-    {
-        if(_paddle1Score >= 11 || _paddle2Score >= 11)//>= si ajout par erreur ou via debug
-        {
-            return true;
-        }
-        return false;
-    }
+    
+    public bool IsGameOver() => _paddle1Score >= 11 || _paddle2Score >= 11;//>= si ajout par erreur ou via debug
 
     public int GetWinner()
     {
         return _paddle1Score > _paddle2Score ? _paddle1Id : _paddle2Id;//si le score du joueur 1 > au score du joueur 2, en renvoie l'identifiant du joueur 1, sinon, on renvoie celui du joueur 2
+    }
+    
+    public void Reset()
+    {
+        _paddle1Score = 0;
+        _paddle2Score = 0;
     }
 }

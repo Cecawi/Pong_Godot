@@ -28,8 +28,8 @@ public class Ball
         Radius = setOnceRadius;
         VelocityX = velocityX;
         VelocityY = velocityY;
-        this._fieldWidth = fieldWidth;
-        this._fieldHeight = fieldHeight;
+        _fieldWidth = fieldWidth;
+        _fieldHeight = fieldHeight;
     }
     
     public (float x, float y) GetPosition()
