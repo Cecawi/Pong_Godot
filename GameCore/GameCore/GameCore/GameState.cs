@@ -15,8 +15,8 @@ public class GameState
     {
         //_b = new Ball();/////PARAMETRES (à voir)
         _b = new Ball(_fieldWidth / 2, _fieldHeight / 2, 3, 100, 100, _fieldWidth, _fieldHeight);
-        _p1 = new Paddle(100, _fieldHeight / 2 - 50, 3, 100, 100, _fieldHeight);
-        _p2 = new Paddle(_fieldWidth - 100 - 2, _fieldHeight / 2 - 50, 3, 100, 100, _fieldHeight);
+        _p1 = new Paddle(100, _fieldHeight / 2 - 50, 3, 100, 500, _fieldHeight);
+        _p2 = new Paddle(_fieldWidth - 100 - 2, _fieldHeight / 2 - 50, 3, 100, 500, _fieldHeight);
         _score = new Score();
         _isGameOver = false;
     }

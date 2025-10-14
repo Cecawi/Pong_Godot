@@ -21,3 +21,15 @@ texture = ExtResource("3_kry3j")
 
 [node name="Sprite2D" type="Sprite2D" parent="Paddle2"]
 texture = ExtResource("3_kry3j")
+
+[node name="Label_Joueur1" type="Label" parent="."]
+offset_left = 232.0
+offset_top = 20.0
+offset_right = 272.0
+offset_bottom = 43.0
+
+[node name="Label_Joueur2" type="Label" parent="."]
+offset_left = 645.0
+offset_top = 25.0
+offset_right = 685.0
+offset_bottom = 48.0
