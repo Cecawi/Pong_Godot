@@ -5,23 +5,31 @@ namespace Pong.Scripts;
 
 public partial class Main : Node2D
 {
-	//GameCore
+	// GameCore
 	private GameState _gameState;
 	
-	//Références aux nœuds visuels
+	// références aux nœuds visuels
 	private Area2D _ballNode;
 	private Area2D _paddle1Node;
 	private Area2D _paddle2Node;
+	
+	// pour conversion entre monde normalisé et pixels
+	private Vector2 _windowSize;
 
 	public override void _Ready()
 	{
-		// initialisation du GameCore
-		_gameState = new GameState();
-		
 		// récupérer les nœuds de la scène
 		_ballNode = GetNode<Area2D>("Ball");
 		_paddle1Node = GetNode<Area2D>("Paddle1");
 		_paddle2Node = GetNode<Area2D>("Paddle2");
+		
+		// Taille de la fenêtre
+		_windowSize = GetViewport().GetVisibleRect().Size;
+		
+		// initialisation du GameCore
+		_gameState = new GameState();
+		
+		UpdateVisuals();
 		
 		var (p1X, p1Y) = _gameState.GetPaddle1Position();
 		var (p2X, p2Y) = _gameState.GetPaddle2Position();
@@ -67,13 +75,23 @@ public partial class Main : Node2D
 	
 	private void UpdateVisuals()
 	{
+		Vector2 ToPixels(float normX, float normY)
+		{
+			// (-0.5, -0.5) → (0,0)
+			// (+0.5, +0.5) → (windowWidth, windowHeight)
+			float x = (normX + 0.5f) * _windowSize.X;
+			float y = (normY + 0.5f) * _windowSize.Y;
+			return new Vector2(x, y);
+		}
+		
 		// balle
 		var (ballX, ballY) = _gameState.GetBallPosition();
-		_ballNode.Position = new Vector2(ballX, ballY);
+		_ballNode.Position = ToPixels(ballX, ballY);
 
 		// raquettes
-		var (p1Y, p2Y) = _gameState.GetPaddlesYPosition();
-		_paddle1Node.Position = new Vector2(_paddle1Node.Position.X, p1Y);
-		_paddle2Node.Position = new Vector2(_paddle2Node.Position.X, p2Y);
+		var (p1X, p1Y) = _gameState.GetPaddle1Position();
+		var (p2X, p2Y) = _gameState.GetPaddle2Position();
+		_paddle1Node.Position = ToPixels(p1X, p1Y);
+		_paddle2Node.Position = ToPixels(p2X, p2Y);
 	}
 }

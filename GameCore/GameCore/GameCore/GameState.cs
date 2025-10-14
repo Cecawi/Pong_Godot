@@ -6,17 +6,27 @@ public class GameState
     private readonly Ball _b;
     private readonly Paddle _p1;
     private readonly Paddle _p2;
-    private Score _score;
+    private readonly Score _score;
     private bool _isGameOver;
-    private float _fieldWidth = 1000;
-    private float _fieldHeight = 600;
+
+    // monde normalisé (-0.5 à +0.5)
+    private readonly float _fieldWidth = 1.0f;
+    private readonly float _fieldHeight = 1.0f;
+    private readonly float _margeGaucheDroite = 0.4f; // en unité normalisée
 
     public GameState()
     {
-        //_b = new Ball();/////PARAMETRES (à voir)
-        _b = new Ball(_fieldWidth / 2, _fieldHeight / 2, 3, 100, 100, _fieldWidth, _fieldHeight);
-        _p1 = new Paddle(100, _fieldHeight / 2 - 50, 3, 100, 100, _fieldHeight);
-        _p2 = new Paddle(_fieldWidth - 100 - 2, _fieldHeight / 2 - 50, 3, 100, 100, _fieldHeight);
+        // Générer le sens initial de la balle aléatoire (-1 ou +1)
+        int direction = new Random().Next(0, 2) == 0 ? -1 : 1;
+        
+        // on considère que le centre est (0,0), donc la balle démarre au milieu
+        // les tailles et vitesses sont exprimées dans le monde normalisé
+        _b = new Ball(0f, 0f, 0.03f, 0.2f * direction, 0.2f, _fieldWidth, _fieldHeight);
+
+        // paddles centrés verticalement
+        _p1 = new Paddle(-_margeGaucheDroite, 0f, 0.0001f, 0.25f, 0.3f, _fieldHeight);
+        _p2 = new Paddle(_margeGaucheDroite, 0f, 0.0001f, 0.25f, 0.3f, _fieldHeight);
+
         _score = new Score();
         _isGameOver = false;
     }
@@ -25,50 +35,53 @@ public class GameState
     {
         if (_isGameOver)
         {
-            return;// on ne met plus à jour si le jeu est terminé
+            return; // on ne met plus à jour si le jeu est terminé
         }
 
-        //déplacement des raquettes selon l'intention
+        // déplacement des raquettes selon l'intention
         _p1.Move(p1Intention.Move, deltaTime);
         _p2.Move(p2Intention.Move, deltaTime);
 
-        //mise à jour de la balle
+        // mise à jour de la balle
         _b.Update(deltaTime);
 
-        //collision balle/raquette gauche
-        _b.BounceFromPaddle(_p1.X + _p1.Width, _p1.Y, _p1.Height, isLeftPaddle: true);
+        // collision balle/raquette gauche
+        _b.BounceFromPaddle(_p1.X + _p1.Width / 2f, _p1.Y, _p1.Height, isLeftPaddle: true);
 
-        //collision balle/raquette droite
-        _b.BounceFromPaddle(_p2.X, _p2.Y, _p2.Height, isLeftPaddle: false);
+        // collision balle/raquette droite
+        _b.BounceFromPaddle(_p2.X - _p2.Width / 2f, _p2.Y, _p2.Height, isLeftPaddle: false);
 
-        //gestion des points
+        // gestion des points
         if (_b.IsOutLeft())
         {
-            _score.AddPoint(1); //point pour joueur 2
+            _score.AddPoint(1); // point pour joueur 2
             ResetBall(directionToRight: true);
         }
         else if (_b.IsOutRight())
         {
-            _score.AddPoint(0); //point pour joueur 1
+            _score.AddPoint(0); // point pour joueur 1
             ResetBall(directionToRight: false);
         }
 
-        //vérifie si la partie est terminée
+        // vérifie si la partie est terminée
         if (_score.IsGameOver())
         {
             _isGameOver = true;
         }
     }
     
-    //réinitialise la balle après un point
+    // réinitialise la balle après un point
     private void ResetBall(bool directionToRight)
     {
-        float vx = directionToRight ? 100 : -100;
-        float vy = (float)(new Random().NextDouble() * 200 - 100); //-100 à +100
-        _b.Reset(_fieldWidth / 2, _fieldHeight / 2, vx, vy);
+        int randomDir = new Random().Next(0, 2) == 0 ? -1 : 1;
+        float vx = directionToRight ? 0.2f : -0.2f;
+        vx *= randomDir;
+        float vy = (float)(new Random().NextDouble() * 0.4f - 0.2f); // -0.2 à +0.2
+        _b.Reset(0f, 0f, vx, vy);
     }
 
-    public (float x, float y) GetBallPosition()//(float x, float y) : vecteur, position x, y
+    // --- Accesseurs pour l'affichage ---
+    public (float x, float y) GetBallPosition() // (x, y) : vecteur, position x, y
     {
         return _b.GetPosition();
     }

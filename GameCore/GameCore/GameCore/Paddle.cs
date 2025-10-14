@@ -55,14 +55,16 @@
         // méthode pour rester dans le terrain
         private void ClampY()
         {
-            if (Y < 0)
+            // limite basse
+            if (Y - Height / 2f < -_fieldHeight / 2f)
             {
-                Y = 0;
+                Y = -_fieldHeight / 2f + Height / 2f;
             }
 
-            if (Y + Height > _fieldHeight)
+            // limite haute
+            if (Y + Height / 2f > _fieldHeight / 2f)
             {
-                Y = _fieldHeight - Height;
+                Y = _fieldHeight / 2f - Height / 2f;
             }
         }
     }

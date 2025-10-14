@@ -2,22 +2,21 @@ namespace GameCore;
 
 //objectif : représenter la physique et les règles de déplacement de la balle
 //sans dépendre d’aucun moteur graphique
-
-//il y a presque tout, faut regarder et vérifier les commentaires
 public class Ball
 {
     
     //attributs
-    public float X { get; private set; }
-    public float Y { get; private set; }
-    public float Radius { get; }///
-                                /// ///////////////voir si on garde le rayon de la balle, normalement oui
-                                ///
-    public float VelocityX { get; private set; }
-    public float VelocityY { get; private set; }
+    private float X { get; set; }
+    private float Y { get; set; }
+    private float Radius { get; }///  ///////////////voir si on garde le rayon de la balle, normalement oui
+    private float VelocityX { get; set; }
+
+    private float VelocityY { get; set; }
+
     //"taille" du terrain : 
-    private readonly float _fieldWidth;//x (gauche : 0/droite : fieldWidth)
-    private readonly float _fieldHeight;//y (haut : 0/bas : fieldHeight)
+    private readonly float _fieldWidth;  //x (gauche : -fieldWidth/2 / droite : +fieldWidth/2)
+    private readonly float _fieldHeight; //y (bas : -fieldHeight/2 / haut : +fieldHeight/2)
+
     //readonly : on doit lui assigner une valeur dans le constructeur
     
     //constructeur
@@ -43,7 +42,8 @@ public class Ball
         X += VelocityX * deltaTime;//deltaTime rend le mouvement indépendant du framerate
         Y += VelocityY * deltaTime;
 
-        if (Y - Radius <= 0 || Y + Radius >= _fieldHeight)
+        //rebond haut/bas
+        if (Y + Radius >= _fieldHeight / 2f || Y - Radius <= -_fieldHeight / 2f)
         {
             VelocityY = -VelocityY;
             ClampY();
@@ -60,76 +60,50 @@ public class Ball
     
     public void BounceFromPaddle(float paddleX, float paddleY, float paddleHeight, bool isLeftPaddle)
     {
-        // On ne rebondit que si la balle est alignée verticalement ET touche le paddle en X
-        bool verticallyAligned = Y + Radius >= paddleY && Y - Radius <= paddleY + paddleHeight;
+        bool verticallyAligned = Y + Radius >= paddleY - paddleHeight / 2f && Y - Radius <= paddleY + paddleHeight / 2f;
 
         if (isLeftPaddle)
         {
-            if (verticallyAligned && X - Radius <= paddleX)
+            if (verticallyAligned && X - Radius <= paddleX + 0.01f) // marge min
             {
                 //rebond sur la raquette gauche
                 VelocityX = Math.Abs(VelocityX);
                 X = paddleX + Radius;
 
                 //modifie légèrement la direction verticale selon le point d'impact
-                float hitPos = (Y - (paddleY + paddleHeight / 2)) / (paddleHeight / 2);
+                float hitPos = (Y - paddleY) / (paddleHeight / 2f);
                 VelocityY = hitPos * Math.Abs(VelocityX);
             }
         }
         else
         {
-            if (verticallyAligned && X + Radius >= paddleX)
+            if (verticallyAligned && X + Radius >= paddleX - 0.01f)
             {
                 //rebond sur la raquette droite
                 VelocityX = -Math.Abs(VelocityX);
                 X = paddleX - Radius;
 
                 //modifie légèrement la direction verticale selon le point d'impact
-                float hitPos = (Y - (paddleY + paddleHeight / 2)) / (paddleHeight / 2);
+                float hitPos = (Y - paddleY) / (paddleHeight / 2f);
                 VelocityY = hitPos * Math.Abs(VelocityX);
             }
         }
     }
     
-    //hitPos : point d'impact avec la balle
-    //hitPos : vaut entre -1 et 1 : valeur proportionnelle à l'endroit de l'impact
-    //paddleY + (paddleHeight / 2) : centre vertical du paddle
-    //Y - (paddleY + paddleHeight / 2) : distance entre la balle et le centre du paddle
-    //on divise par paddleHeight / 2 pour etre entre -1 et 1
-    //* Math.Abs(VelocityX) : valeur absolue  : la vitesse horizontale sans signe
-    //* Math.Abs(VelocityX) : lie la puissance verticale à la vitesse horizontale : vitesse totale à peu près constante
-    //plus la balle frappe loin du centre, plus l’angle du rebond est fort
-    
-    /*
-    ↑ 0
-    │
-    │   balle.Y
-    │     ↓
-    │     ●  ← la balle
-    │
-    │ [paddleY]       ← haut de la raquette
-    │ |             |
-    │ |   RAQUETTE  | ← hauteur = paddleHeight
-    │ |             |
-    │ [paddleY + paddleHeight] ← bas de la raquette
-    │
-    ↓ fieldHeight
-    */
-    
     private void ClampY()//replace la balle à l'intérieur du terrain après un rebond
     {
-        if (Y - Radius < 0)
+        if (Y - Radius < -_fieldHeight / 2f)
         {
-            Y = Radius;
+            Y = -_fieldHeight / 2f + Radius;
         }
 
-        if (Y + Radius > _fieldHeight)
+        if (Y + Radius > _fieldHeight / 2f)
         {
-            Y = _fieldHeight - Radius;
+            Y = _fieldHeight / 2f - Radius;
         }
     }
 
-    public bool IsOutLeft() => X + Radius < 0;//but : point pour joueur à droite
+    public bool IsOutLeft() => X + Radius < -_fieldWidth / 2f;   //but : point pour joueur à droite
    
-    public bool IsOutRight() => X - Radius > _fieldWidth;//but : point pour joueur à gauche
+    public bool IsOutRight() => X - Radius > _fieldWidth / 2f;   //but : point pour joueur à gauche
 }
