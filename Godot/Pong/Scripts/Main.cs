@@ -12,6 +12,10 @@ public partial class Main : Node2D
 	private Area2D _ballNode;
 	private Area2D _paddle1Node;
 	private Area2D _paddle2Node;
+	private Label _labelP1;
+	private Label _labelP2;
+
+	
 	
 	// pour conversion entre monde normalisé et pixels
 	private Vector2 _windowSize;
@@ -28,6 +32,8 @@ public partial class Main : Node2D
 		
 		// initialisation du GameCore
 		_gameState = new GameState();
+		_labelP1 = GetNode<Label>("Label1");
+		_labelP2 = GetNode<Label>("Label2");
 		
 		UpdateVisuals();
 		
@@ -35,6 +41,8 @@ public partial class Main : Node2D
 		var (p2X, p2Y) = _gameState.GetPaddle2Position();
 		_paddle1Node.Position = new Vector2(p1X, p1Y);
 		_paddle2Node.Position = new Vector2(p2X, p2Y);
+		
+
 	}
 	
 	public override void _Process(double delta)
@@ -93,5 +101,11 @@ public partial class Main : Node2D
 		var (p2X, p2Y) = _gameState.GetPaddle2Position();
 		_paddle1Node.Position = ToPixels(p1X, p1Y);
 		_paddle2Node.Position = ToPixels(p2X, p2Y);
+		
+		
+		var (s1, s2) = _gameState.GetScore();
+		_labelP1.Text = s1.ToString();
+		_labelP2.Text = s2.ToString();
+
 	}
 }

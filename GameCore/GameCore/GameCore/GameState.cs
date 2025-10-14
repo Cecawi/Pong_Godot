@@ -24,8 +24,8 @@ public class GameState
         _b = new Ball(0f, 0f, 0.03f, 0.2f * direction, 0.2f, _fieldWidth, _fieldHeight);
 
         // paddles centrés verticalement
-        _p1 = new Paddle(-_margeGaucheDroite, 0f, 0.0001f, 0.25f, 0.3f, _fieldHeight);
-        _p2 = new Paddle(_margeGaucheDroite, 0f, 0.0001f, 0.25f, 0.3f, _fieldHeight);
+        _p1 = new Paddle(-_margeGaucheDroite, 0f, 0.03f, 0.12f, 0.3f, _fieldHeight);
+        _p2 = new Paddle(_margeGaucheDroite, 0f, 0.03f, 0.12f, 0.3f, _fieldHeight);
 
         _score = new Score();
         _isGameOver = false;
@@ -44,12 +44,12 @@ public class GameState
 
         // mise à jour de la balle
         _b.Update(deltaTime);
-
+    
         // collision balle/raquette gauche
-        _b.BounceFromPaddle(_p1.X + _p1.Width / 2f, _p1.Y, _p1.Height, isLeftPaddle: true);
+        _b.BounceFromPaddle(_p1.X + _p1.Width / 2f, _p1.Y, _p1.Width, _p1.Height, isLeftPaddle: true);
 
         // collision balle/raquette droite
-        _b.BounceFromPaddle(_p2.X - _p2.Width / 2f, _p2.Y, _p2.Height, isLeftPaddle: false);
+        _b.BounceFromPaddle(_p2.X - _p2.Width / 2f, _p2.Y, _p2.Width, _p2.Height, isLeftPaddle: false);
 
         // gestion des points
         if (_b.IsOutLeft())

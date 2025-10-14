@@ -58,37 +58,40 @@ public class Ball
         VelocityY = velocityY;
     }
     
-    public void BounceFromPaddle(float paddleX, float paddleY, float paddleHeight, bool isLeftPaddle)
+    public void BounceFromPaddle(float paddleX, float paddleY, float paddleWidth, float paddleHeight, bool isLeftPaddle)
     {
+        // Vérifie si la balle est dans la plage verticale de la raquette
         bool verticallyAligned = Y + Radius >= paddleY - paddleHeight / 2f && Y - Radius <= paddleY + paddleHeight / 2f;
+        
+        float collisionMargin = 0.01f; // à ajuster selon sprite
+        if (!verticallyAligned) return;
 
         if (isLeftPaddle)
         {
-            if (verticallyAligned && X - Radius <= paddleX + 0.01f) // marge min
+            // contact réel : le bord droit de la raquette avec le bord gauche de la balle
+            if (X - Radius <= paddleX + paddleWidth / 2f)
             {
-                //rebond sur la raquette gauche
                 VelocityX = Math.Abs(VelocityX);
-                X = paddleX + Radius;
+                X = paddleX + paddleWidth / 2f + Radius;
 
-                //modifie légèrement la direction verticale selon le point d'impact
                 float hitPos = (Y - paddleY) / (paddleHeight / 2f);
                 VelocityY = hitPos * Math.Abs(VelocityX);
             }
         }
         else
         {
-            if (verticallyAligned && X + Radius >= paddleX - 0.01f)
+            // contact réel : le bord gauche de la raquette avec le bord droit de la balle
+            if (X + Radius >= paddleX - paddleWidth / 2f)
             {
-                //rebond sur la raquette droite
                 VelocityX = -Math.Abs(VelocityX);
-                X = paddleX - Radius;
+                X = paddleX - paddleWidth / 2f - Radius;
 
-                //modifie légèrement la direction verticale selon le point d'impact
                 float hitPos = (Y - paddleY) / (paddleHeight / 2f);
                 VelocityY = hitPos * Math.Abs(VelocityX);
             }
         }
     }
+
     
     private void ClampY()//replace la balle à l'intérieur du terrain après un rebond
     {
