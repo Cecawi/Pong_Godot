@@ -10,8 +10,8 @@ public class Ball
     private float Y { get; set; }
     internal float Radius { get; }
     private float VelocityX { get; set; }
-
     private float VelocityY { get; set; }
+    private const float MaxSpeed = 1.5f;//limite la vitesse max
 
     //"taille" du terrain : 
     private readonly float _fieldWidth;  //x (gauche : -fieldWidth/2 / droite : +fieldWidth/2)
@@ -78,6 +78,7 @@ public class Ball
         
         if (!verticallyAligned) return;
 
+        // on peut compacter en extrayant la logique commune mais je trouve que c'est plus parlant comme ça : 
         if (isLeftPaddle)// rebond avec la raquette gauche
         {
             // contact réel : le bord droit de la raquette avec le bord gauche de la balle
@@ -87,8 +88,8 @@ public class Ball
                 X = paddleX + paddleWidth / 2f + collisionRadius;
                 ApplyBounceAngle(paddleY, paddleHeight);
                 // Accélération légère à chaque rebond
-                VelocityX *= 1.25f;
-                VelocityY *= 1.25f;
+                VelocityX = Math.Clamp(VelocityX * 1.25f, -MaxSpeed, MaxSpeed);//limite la vitesse max
+                VelocityY = Math.Clamp(VelocityY * 1.25f, -MaxSpeed, MaxSpeed);
             }
         }
         else// rebond avec la raquette droite
@@ -102,8 +103,8 @@ public class Ball
                 /*float hitPos = (Y - paddleY) / (paddleHeight / 2f);
                 VelocityY = hitPos * Math.Abs(VelocityX);*/
                 // Accélération légère à chaque rebond
-                VelocityX *= 1.25f;
-                VelocityY *= 1.25f;
+                VelocityX = Math.Clamp(VelocityX * 1.25f, -MaxSpeed, MaxSpeed);
+                VelocityY = Math.Clamp(VelocityY * 1.25f, -MaxSpeed, MaxSpeed);
             }
         }
     }

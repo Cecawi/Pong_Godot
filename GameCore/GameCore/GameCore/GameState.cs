@@ -2,6 +2,13 @@
 
 public class GameState
 {
+    //pour ajuster plus facilement lors des tests : 
+    private const float BallRadius = 0.015f;
+    private const float PaddleWidth = 0.02f;
+    private const float PaddleHeight = 0.15f;
+    private const float PaddleSpeed = 0.5f;
+    private const float BallSpeed = 0.2f;
+    
     //attributs
     private readonly Ball _b;
     private readonly Paddle _p1;
@@ -13,19 +20,21 @@ public class GameState
     private readonly float _fieldWidth = 1.0f;
     private readonly float _fieldHeight = 1.0f;
     private readonly float _margeGaucheDroite = 0.4f; // en unité normalisée
+    
+    private static readonly Random Rand = new();
 
     public GameState()
     {
         // Générer le sens initial de la balle aléatoire (-1 ou +1)
-        int direction = new Random().Next(0, 2) == 0 ? -1 : 1;
+        int direction = Rand.Next(0, 2) == 0 ? -1 : 1;
         
         // on considère que le centre est (0,0), donc la balle démarre au milieu
         // les tailles et vitesses sont exprimées dans le monde normalisé
-        _b = new Ball(0f, 0f, 0.015f, 0.2f * direction, 0.2f, _fieldWidth, _fieldHeight);
+        _b = new Ball(0f, 0f, BallRadius, BallSpeed * direction, BallSpeed, _fieldWidth, _fieldHeight);
 
         // paddles centrés verticalement
-        _p1 = new Paddle(-_margeGaucheDroite, 0f, 0.02f, 0.15f, 0.5f, _fieldHeight);
-        _p2 = new Paddle(_margeGaucheDroite, 0f, 0.02f, 0.15f, 0.5f, _fieldHeight);
+        _p1 = new Paddle(-_margeGaucheDroite, 0f, PaddleWidth, PaddleHeight, PaddleSpeed, _fieldHeight);
+        _p2 = new Paddle(_margeGaucheDroite, 0f, PaddleWidth, PaddleHeight, PaddleSpeed, _fieldHeight);
 
         _score = new Score();
         _isGameOver = false;
@@ -55,12 +64,12 @@ public class GameState
         if (_b.IsOutLeft())
         {
             _score.AddPoint(1); // point pour joueur 2
-            ResetBall(directionToRight: true);///////////////direction vers le gagnant ? perdant ? aléatoire ?
+            ResetBall();
         }
         else if (_b.IsOutRight())
         {
             _score.AddPoint(0); // point pour joueur 1
-            ResetBall(directionToRight: false);///////////////direction vers le gagnant ? perdant ? aléatoire ?
+            ResetBall();
         }
 
         // vérifie si la partie est terminée
@@ -71,12 +80,10 @@ public class GameState
     }
     
     // réinitialise la balle après un point
-    private void ResetBall(bool directionToRight)
+    private void ResetBall()
     {
-        int randomDir = new Random().Next(0, 2) == 0 ? -1 : 1;
-        float vx = directionToRight ? 0.2f : -0.2f;
-        vx *= randomDir;
-        float vy = (float)(new Random().NextDouble() * 0.4f - 0.2f); // -0.2 à +0.2
+        float vx = (Rand.Next(0, 2) == 0 ? -1f : 1f) * 0.2f;
+        float vy = (float)(Rand.NextDouble() * 0.4 - 0.2f);// -0.2 à +0.2
         _b.Reset(0f, 0f, vx, vy);
     }
 
