@@ -19,6 +19,12 @@ public partial class Main : Node2D
 	private Sprite2D _paddle1Sprite;
 	private Sprite2D _paddle2Sprite;
 	
+	private CanvasLayer _gameOverUI;
+	private Label _gameOverLabel;
+	private Button _restartButton;
+	private bool _isGameOver = false;
+
+	
 	// pour conversion entre monde normalisé et pixels
 	private Vector2 _windowSize;
 
@@ -40,6 +46,15 @@ public partial class Main : Node2D
 		_labelP1 = GetNode<Label>("Label1");
 		_labelP2 = GetNode<Label>("Label2");
 		
+		// Game Over UI
+		_gameOverUI = GetNode<CanvasLayer>("GameOverUI");
+		_gameOverLabel = _gameOverUI.GetNode<Label>("VBoxContainer/GameOverLabel");
+		_restartButton = _gameOverUI.GetNode<Button>("VBoxContainer/RestartButton");
+		_restartButton.Pressed += OnRestartPressed;
+		_gameOverUI.Visible = false;
+		//_restartButton.PauseMode = PauseMode.Process;
+
+		
 		UpdateVisuals();
 		
 		/*var (p1X, p1Y) = _gameState.GetPaddle1Position();
@@ -58,6 +73,15 @@ public partial class Main : Node2D
 
 		// mettre à jour la logique du jeu
 		_gameState.Update(deltaTime, p1Intention, p2Intention);
+		
+		if (!_isGameOver && _gameState.IsGameOver())
+{
+	var winnerId = _gameState.GetScore().Item1 > _gameState.GetScore().Item2 ? 0 : 1;
+	string winner = winnerId == 0 ? "Player 1" : "Player 2";
+	OnGameOver(winner);
+}
+
+
 
 		// mettre à jour l'affichage
 		UpdateVisuals();
@@ -121,4 +145,24 @@ public partial class Main : Node2D
 		_labelP2.Text = s2.ToString();
 
 	}
+	
+		private void OnGameOver(string winner)
+	{
+		if (_isGameOver) return;
+
+		_isGameOver = true;
+		_gameOverLabel.Text = $"Game Over\n{winner} Wins!";
+		_gameOverUI.Visible = true;
+		GetTree().Paused = true;
+	}
+	private void OnRestartPressed()
+	{
+		_gameState = new GameState();   // réinitialiser score, balle, paddles
+		_isGameOver = false;             // réactiver le jeu
+		_gameOverUI.Visible = false;     // cacher UI Game Over
+		GetTree().Paused = false;
+		UpdateVisuals();                 // remettre l’affichage à zéro
+	}
+
+
 }

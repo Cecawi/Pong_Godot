@@ -21,7 +21,7 @@ public class GameState
         
         // on considère que le centre est (0,0), donc la balle démarre au milieu
         // les tailles et vitesses sont exprimées dans le monde normalisé
-        _b = new Ball(0f, 0f, 0.03f, 0.07f * direction, 0.07f, _fieldWidth, _fieldHeight);
+        _b = new Ball(0f, 0f, 0.03f, 0.7f * direction, 0.35f, _fieldWidth, _fieldHeight);
 
         // paddles centrés verticalement
         _p1 = new Paddle(-_margeGaucheDroite, 0f, 0.03f, 0.12f, 0.3f, _fieldHeight);
@@ -74,7 +74,7 @@ public class GameState
     private void ResetBall(bool directionToRight)
     {
         int randomDir = new Random().Next(0, 2) == 0 ? -1 : 1;
-        float vx = directionToRight ? 0.07f : -0.07f;
+        float vx = directionToRight ? 0.7f : -0.7f;
         vx *= randomDir;
         float vy = (float)(new Random().NextDouble() * 0.14f - 0.07f); // - 0.07 à + 0.07 ///////////////direction vers le gagnant ? perdant ? aléatoire ?
         _b.Reset(0f, 0f, vx, vy);
