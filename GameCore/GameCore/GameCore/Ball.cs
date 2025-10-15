@@ -8,7 +8,7 @@ public class Ball
     //attributs
     private float X { get; set; }
     private float Y { get; set; }
-    internal float Radius { get; }///  ///////////////voir si on garde le rayon de la balle, normalement oui
+    internal float Radius { get; }
     private float VelocityX { get; set; }
 
     private float VelocityY { get; set; }
@@ -69,15 +69,16 @@ public class Ball
     public void BounceFromPaddle(float paddleX, float paddleY, float paddleWidth, float paddleHeight, bool isLeftPaddle)
     {
         // ajustement pour que la collision corresponde à l'affichage
+        // réduit le Radius utilisé dans la collision pour compenser l’échelle visuelle
         //////////////////////////////////////demander au prof
         float collisionRadius = Radius * 0.4f; // plus petit que le rayon
         
-        // Vérifie si la balle est dans la plage verticale de la raquette
-        bool verticallyAligned = Y + Radius >= paddleY - paddleHeight / 2f && Y - Radius <= paddleY + paddleHeight / 2f;
+        // vérifie si la balle est dans la plage verticale de la raquette
+        bool verticallyAligned = Y + collisionRadius >= paddleY - paddleHeight / 2f && Y - collisionRadius <= paddleY + paddleHeight / 2f;
         
         if (!verticallyAligned) return;
 
-        if (isLeftPaddle)
+        if (isLeftPaddle)// rebond avec la raquette gauche
         {
             // contact réel : le bord droit de la raquette avec le bord gauche de la balle
             if (X - collisionRadius <= paddleX + paddleWidth / 2f)
@@ -85,15 +86,12 @@ public class Ball
                 VelocityX = Math.Abs(VelocityX);
                 X = paddleX + paddleWidth / 2f + collisionRadius;
                 ApplyBounceAngle(paddleY, paddleHeight);
-                /*float hitPos = (Y - paddleY) / (paddleHeight / 2f);
-                VelocityY = hitPos * Math.Abs(VelocityX);*/
                 // Accélération légère à chaque rebond
                 VelocityX *= 1.25f;
                 VelocityY *= 1.25f;
-                /////////////////EST CE QU'ON DEVRAIT AUSSI AUGMENTER LA VITESSE DES PADDLES ?
             }
         }
-        else
+        else// rebond avec la raquette droite
         {
             // contact réel : le bord gauche de la raquette avec le bord droit de la balle
             if (X + collisionRadius >= paddleX - paddleWidth / 2f)
