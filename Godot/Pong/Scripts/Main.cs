@@ -15,7 +15,9 @@ public partial class Main : Node2D
 	private Label _labelP1;
 	private Label _labelP2;
 
-	
+	private Sprite2D _ballSprite;
+	private Sprite2D _paddle1Sprite;
+	private Sprite2D _paddle2Sprite;
 	
 	// pour conversion entre monde normalisé et pixels
 	private Vector2 _windowSize;
@@ -26,6 +28,9 @@ public partial class Main : Node2D
 		_ballNode = GetNode<Area2D>("Ball");
 		_paddle1Node = GetNode<Area2D>("Paddle1");
 		_paddle2Node = GetNode<Area2D>("Paddle2");
+		_ballSprite = _ballNode.GetNode<Sprite2D>("Sprite2D");
+		_paddle1Sprite = _paddle1Node.GetNode<Sprite2D>("Sprite2D");
+		_paddle2Sprite = _paddle2Node.GetNode<Sprite2D>("Sprite2D");
 		
 		// Taille de la fenêtre
 		_windowSize = GetViewport().GetVisibleRect().Size;
@@ -37,12 +42,10 @@ public partial class Main : Node2D
 		
 		UpdateVisuals();
 		
-		var (p1X, p1Y) = _gameState.GetPaddle1Position();
+		/*var (p1X, p1Y) = _gameState.GetPaddle1Position();
 		var (p2X, p2Y) = _gameState.GetPaddle2Position();
 		_paddle1Node.Position = new Vector2(p1X, p1Y);
-		_paddle2Node.Position = new Vector2(p2X, p2Y);
-		
-
+		_paddle2Node.Position = new Vector2(p2X, p2Y);*/
 	}
 	
 	public override void _Process(double delta)
@@ -95,6 +98,11 @@ public partial class Main : Node2D
 		// balle
 		var (ballX, ballY) = _gameState.GetBallPosition();
 		_ballNode.Position = ToPixels(ballX, ballY);
+		
+		// mettre à l’échelle selon le monde normalisé
+		var ballRadiusNorm = _gameState.GetBallRadius();
+		float pixelDiameter = ballRadiusNorm * 2 * _windowSize.Y;
+		_ballSprite.Scale = new Vector2(pixelDiameter / _ballSprite.Texture.GetSize().X, pixelDiameter / _ballSprite.Texture.GetSize().Y);
 
 		// raquettes
 		var (p1X, p1Y) = _gameState.GetPaddle1Position();
@@ -102,6 +110,11 @@ public partial class Main : Node2D
 		_paddle1Node.Position = ToPixels(p1X, p1Y);
 		_paddle2Node.Position = ToPixels(p2X, p2Y);
 		
+		// mise à l’échelle selon le monde normalisé
+		var (p1W, p1H) = _gameState.GetPaddle1Size();
+		var (p2W, p2H) = _gameState.GetPaddle2Size();
+		_paddle1Sprite.Scale = new Vector2(p1W * _windowSize.X / _paddle1Sprite.Texture.GetSize().X, p1H * _windowSize.Y / _paddle1Sprite.Texture.GetSize().Y);
+		_paddle2Sprite.Scale = new Vector2(p2W * _windowSize.X / _paddle2Sprite.Texture.GetSize().X, p2H * _windowSize.Y / _paddle2Sprite.Texture.GetSize().Y);
 		
 		var (s1, s2) = _gameState.GetScore();
 		_labelP1.Text = s1.ToString();
