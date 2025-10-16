@@ -15,6 +15,8 @@ public class GameState
     private readonly Paddle _p2;
     private readonly Score _score;
     private bool _isGameOver;
+    public float GetBallVelocityX() => _b.VelocityX;
+
 
     // monde normalisé (-0.5 à +0.5)
     private readonly float _fieldWidth = 1.0f;

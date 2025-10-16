@@ -1,11 +1,15 @@
 using GameCore;
 using Godot;
+using System;
+
 
 namespace Pong.Scripts;
 
 public partial class Main : Node2D
 {
 	// GameCore
+	
+	private AudioStreamPlayer _bouncesound;
 	private GameState _gameState;
 	
 	// références aux nœuds visuels
@@ -38,6 +42,10 @@ public partial class Main : Node2D
 		_paddle1Sprite = _paddle1Node.GetNode<Sprite2D>("Sprite2D");
 		_paddle2Sprite = _paddle2Node.GetNode<Sprite2D>("Sprite2D");
 		
+		
+		//sound
+		
+		_bouncesound = GetNode<AudioStreamPlayer>("BounceSound");
 		// Taille de la fenêtre
 		_windowSize = GetViewport().GetVisibleRect().Size;
 		
@@ -70,9 +78,17 @@ public partial class Main : Node2D
 		// récupérer les intentions des joueurs
 		var p1Intention = GetPlayerIntention1();
 		var p2Intention = GetPlayerIntention2();
-
+		
+		float prevVelocityX = _gameState.GetBallVelocityX();
 		// mettre à jour la logique du jeu
 		_gameState.Update(deltaTime, p1Intention, p2Intention);
+		float currVelocityX = _gameState.GetBallVelocityX();
+		if (Math.Sign(prevVelocityX) != Math.Sign(currVelocityX))
+		{
+			_bouncesound.Play();
+		}
+
+		
 		
 		if (!_isGameOver && _gameState.IsGameOver())
 {

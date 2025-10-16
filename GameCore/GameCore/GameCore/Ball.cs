@@ -9,7 +9,7 @@ public class Ball
     private float X { get; set; }
     private float Y { get; set; }
     internal float Radius { get; }
-    private float VelocityX { get; set; }
+    public float VelocityX { get; set; }
     private float VelocityY { get; set; }
     private const float MaxSpeed = 1.5f;//limite la vitesse max
 
