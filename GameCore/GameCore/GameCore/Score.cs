@@ -7,6 +7,7 @@ public class Score
     private int _paddle2Score = 0;
     private  int _paddle1Id = 0;
     private  int _paddle2Id = 1;
+    public bool GoalSoundFlag;
     
     //getters et setters
     public int GetPaddle1Score()

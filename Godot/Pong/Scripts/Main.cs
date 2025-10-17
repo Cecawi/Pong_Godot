@@ -10,6 +10,7 @@ public partial class Main : Node2D
 	// GameCore
 	
 	private AudioStreamPlayer _bouncesound;
+	private AudioStreamPlayer _goalsound;
 	private GameState _gameState;
 	
 	// références aux nœuds visuels
@@ -46,6 +47,7 @@ public partial class Main : Node2D
 		//sound
 		
 		_bouncesound = GetNode<AudioStreamPlayer>("BounceSound");
+		_goalsound = GetNode<AudioStreamPlayer>("GoalSound");
 		// Taille de la fenêtre
 		_windowSize = GetViewport().GetVisibleRect().Size;
 		
@@ -79,23 +81,27 @@ public partial class Main : Node2D
 		var p1Intention = GetPlayerIntention1();
 		var p2Intention = GetPlayerIntention2();
 		
-		float prevVelocityX = _gameState.GetBallVelocityX();
 		// mettre à jour la logique du jeu
 		_gameState.Update(deltaTime, p1Intention, p2Intention);
-		float currVelocityX = _gameState.GetBallVelocityX();
-		if (Math.Sign(prevVelocityX) != Math.Sign(currVelocityX))
+		
+		if (_gameState.GetBallBounceSoundFlag())
 		{
 			_bouncesound.Play();
+			_gameState.SetBallBounceSoundFlag(false);
 		}
 
-		
+		if (_gameState.GetScoreGoalSoundFlag())
+		{
+			_goalsound.Play();
+			_gameState.SetScoreGoalSoundFlag(false);
+		}
 		
 		if (!_isGameOver && _gameState.IsGameOver())
-{
-	var winnerId = _gameState.GetScore().Item1 > _gameState.GetScore().Item2 ? 0 : 1;
-	string winner = winnerId == 0 ? "Player 1" : "Player 2";
-	OnGameOver(winner);
-}
+		{
+			var winnerId = _gameState.GetScore().Item1 > _gameState.GetScore().Item2 ? 0 : 1;
+			string winner = winnerId == 0 ? "Player 1" : "Player 2";
+			OnGameOver(winner);
+		}
 
 
 

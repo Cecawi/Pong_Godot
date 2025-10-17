@@ -9,9 +9,10 @@ public class Ball
     private float X { get; set; }
     private float Y { get; set; }
     internal float Radius { get; }
-    public float VelocityX { get; set; }
+    private float VelocityX { get; set; }
     private float VelocityY { get; set; }
     private const float MaxSpeed = 1.5f;//limite la vitesse max
+    public bool BounceSoundFlag;
 
     //"taille" du terrain : 
     private readonly float _fieldWidth;  //x (gauche : -fieldWidth/2 / droite : +fieldWidth/2)
@@ -90,6 +91,7 @@ public class Ball
                 // Accélération légère à chaque rebond
                 VelocityX = Math.Clamp(VelocityX * 1.25f, -MaxSpeed, MaxSpeed);//limite la vitesse max
                 VelocityY = Math.Clamp(VelocityY * 1.25f, -MaxSpeed, MaxSpeed);
+                BounceSoundFlag = true;
             }
         }
         else// rebond avec la raquette droite
@@ -105,6 +107,7 @@ public class Ball
                 // Accélération légère à chaque rebond
                 VelocityX = Math.Clamp(VelocityX * 1.25f, -MaxSpeed, MaxSpeed);
                 VelocityY = Math.Clamp(VelocityY * 1.25f, -MaxSpeed, MaxSpeed);
+                BounceSoundFlag = true;
             }
         }
     }

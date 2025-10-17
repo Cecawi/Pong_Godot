@@ -15,7 +15,6 @@ public class GameState
     private readonly Paddle _p2;
     private readonly Score _score;
     private bool _isGameOver;
-    public float GetBallVelocityX() => _b.VelocityX;
 
 
     // monde normalisé (-0.5 à +0.5)
@@ -67,11 +66,13 @@ public class GameState
         {
             _score.AddPoint(1); // point pour joueur 2
             ResetBall();
+            _score.GoalSoundFlag = true;
         }
         else if (_b.IsOutRight())
         {
             _score.AddPoint(0); // point pour joueur 1
             ResetBall();
+            _score.GoalSoundFlag = true;
         }
 
         // vérifie si la partie est terminée
@@ -84,8 +85,8 @@ public class GameState
     // réinitialise la balle après un point
     private void ResetBall()
     {
-        float vx = (Rand.Next(0, 2) == 0 ? -1f : 1f) * 0.2f;
-        float vy = (float)(Rand.NextDouble() * 0.4 - 0.2f);// -0.2 à +0.2
+        float vx = (Rand.Next(0, 2) == 0 ? -1f : 1f) * BallSpeed;
+        float vy = (float)(Rand.NextDouble() * (BallSpeed * 2 ) - BallSpeed);// -0.2 à +0.2 -> -BallSpeed à +BallSpeed
         _b.Reset(0f, 0f, vx, vy);
     }
 
@@ -96,6 +97,20 @@ public class GameState
     }
     
     public float GetBallRadius() => _b.Radius;
+    
+    public bool GetBallBounceSoundFlag() => _b.BounceSoundFlag;
+
+    public void SetBallBounceSoundFlag(bool flag)
+    {
+        _b.BounceSoundFlag = flag;
+    }
+    
+    public bool GetScoreGoalSoundFlag() => _score.GoalSoundFlag;
+
+    public void SetScoreGoalSoundFlag(bool flag)
+    {
+        _score.GoalSoundFlag = flag;
+    }
 
     public (float y1, float y2) GetPaddlesYPosition()///////////////
     {

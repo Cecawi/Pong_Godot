@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://c0jmvoy7bjoyc"]
+[gd_scene load_steps=6 format=3 uid="uid://c0jmvoy7bjoyc"]
 
 [ext_resource type="Script" uid="uid://tdagv666vvo6" path="res://Scripts/Main.cs" id="1_8gbba"]
 [ext_resource type="Texture2D" uid="uid://b164ttoiu7pnc" path="res://Assets/ball.png" id="2_jjvhh"]
 [ext_resource type="Texture2D" uid="uid://docjn3juy4nln" path="res://Assets/paddle.png" id="3_kry3j"]
 [ext_resource type="AudioStream" uid="uid://bi1liqplcu6ql" path="res://Scripts/vloup_clean.mp3" id="4_jjvhh"]
+[ext_resource type="AudioStream" uid="uid://dix73jubh32du" path="res://SFX/GoalSound.mp3" id="5_kry3j"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_8gbba")
@@ -55,3 +56,9 @@ text = "Restart"
 
 [node name="BounceSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_jjvhh")
+
+[node name="GoalSound" type="AudioStreamPlayer" parent="."]
+process_mode = 3
+stream = ExtResource("5_kry3j")
+volume_db = 10.0
+parameters/looping = false
