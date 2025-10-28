@@ -1,5 +1,6 @@
 ﻿namespace GameCore;
 
+
 public class GameState
 {
     //pour ajuster plus facilement lors des tests : 
