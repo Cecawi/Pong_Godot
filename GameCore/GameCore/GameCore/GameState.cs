@@ -24,6 +24,10 @@ public class GameState
     private readonly float _margeGaucheDroite = 0.4f; // en unité normalisée
     
     private static readonly Random Rand = new();
+    
+    public float GetFieldWidth() => _fieldWidth;
+    public float GetFieldHeight() => _fieldHeight;
+
 
     public GameState()
     {
