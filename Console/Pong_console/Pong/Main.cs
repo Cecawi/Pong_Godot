@@ -6,6 +6,10 @@ namespace Pong;
 public class MainConsole
 {
     private static GameState _gameState;
+
+    private const int Up = PlayerIntention.Up;
+    private const int Neutral = PlayerIntention.Neutral;
+    private const int Down = PlayerIntention.Down;
     
     private float ballX, ballY, paddle1X, paddle1Y, paddle2X, paddle2Y;
 
@@ -18,13 +22,20 @@ public class MainConsole
     private const int Width = 100;
     private const int Height = 20;
     
+    //vitesse d'affichage (ms)
+    private const int FrameDelay = 100;
+    
     public static void Main()
     {
         Console.Clear();
         
         _gameState = new GameState();
-
-        UpdateVisuals();
+        
+        while(true)
+        {
+            _gameState.Update(0.1f, new PlayerIntention(0), GetPlayer2Intention());
+            UpdateVisuals();
+        }
     }
 
     private static void UpdateVisuals()
@@ -86,5 +97,24 @@ public class MainConsole
         int x = (int)((normX + 0.5f) * Width);
         int y = (int)((normY + 0.5f) * Height);
         return (x, y);
+    }
+
+    private static PlayerIntention GetPlayer2Intention()
+    {
+        int move = PlayerIntention.Neutral;
+        
+        var key = Console.ReadKey(true).Key;
+
+        if(key == ConsoleKey.UpArrow)
+        {
+            move = PlayerIntention.Up;
+        }
+        
+        else if(key == ConsoleKey.DownArrow)
+        {
+            move = PlayerIntention.Down;
+        }
+
+        return new PlayerIntention(move);
     }
 }
