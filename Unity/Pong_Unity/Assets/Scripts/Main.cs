@@ -30,7 +30,11 @@ public class Main : MonoBehaviour
     private AudioSource _bounceSound;
     private AudioSource _goalSound;
 
+
     private Vector2 _windowSize;
+
+    private bool _isSplitMode = false;
+
 
     void Start()
     {
@@ -49,23 +53,48 @@ public class Main : MonoBehaviour
         _windowSize = new Vector2(Screen.width, Screen.height);
 
         UpdateVisuals();
+        CreateVisualWalls();
     }
 
     private PlayerIntention GetPlayerIntention1()
     {
         int move = PlayerIntention.Neutral;
-        if (Input.GetKey(KeyCode.W)) move = PlayerIntention.Up;
-        else if (Input.GetKey(KeyCode.S)) move = PlayerIntention.Down;
+
+        if (_isSplitMode)
+        {
+            // En mode split (vue FPS) : A et D
+            if (Input.GetKey(KeyCode.A)) move = PlayerIntention.Up;      // gauche = monte
+            else if (Input.GetKey(KeyCode.D)) move = PlayerIntention.Down; // droite = descend
+        }
+        else
+        {
+            // Vue normale : W et S
+            if (Input.GetKey(KeyCode.W)) move = PlayerIntention.Up;
+            else if (Input.GetKey(KeyCode.S)) move = PlayerIntention.Down;
+        }
+
         return new PlayerIntention(move);
     }
 
     private PlayerIntention GetPlayerIntention2()
     {
         int move = PlayerIntention.Neutral;
-        if (Input.GetKey(KeyCode.UpArrow)) move = PlayerIntention.Up;
-        else if (Input.GetKey(KeyCode.DownArrow)) move = PlayerIntention.Down;
+
+        if (_isSplitMode)
+        {
+            if (Input.GetKey(KeyCode.LeftArrow)) move = PlayerIntention.Up;      // gauche = monte
+            else if (Input.GetKey(KeyCode.RightArrow)) move = PlayerIntention.Down; // droite = descend
+        }
+        else
+        {
+            if (Input.GetKey(KeyCode.UpArrow)) move = PlayerIntention.Up;
+            else if (Input.GetKey(KeyCode.DownArrow)) move = PlayerIntention.Down;
+        }
+
         return new PlayerIntention(move);
     }
+
+
 
 
     void Update()
@@ -90,6 +119,11 @@ public class Main : MonoBehaviour
             _goalSound.Play();
             _gameState.SetScoreGoalSoundFlag(false);
         }
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            _isSplitMode = !_isSplitMode;
+            FindObjectOfType<Split>().SetSplitScreen(_isSplitMode);
+        }
 
         if (!_isGameOver && _gameState.IsGameOver())
         {
@@ -105,7 +139,7 @@ public class Main : MonoBehaviour
         Vector2 ToPixels(float normX, float normY)
         {
             float x = (normX + 0.5f) * _windowSize.x;
-            float y = (normY + 0.5f) * _windowSize.y;
+            float y = ( 0.5f- normY) * _windowSize.y;
             return new Vector2(x, y);
         }
 
@@ -129,6 +163,7 @@ public class Main : MonoBehaviour
         _isGameOver = true;
         GameOverLabel.text = $"Game Over\n{winner} Wins!";
         GameOverUI.SetActive(true);
+        RestartButton.gameObject.SetActive(true);
         Time.timeScale = 0f; // pause le jeu
     }
 
@@ -140,6 +175,40 @@ public class Main : MonoBehaviour
         Time.timeScale = 1f;
         UpdateVisuals();
     }
+
+    void CreateVisualWalls()
+    {
+        float fieldWidth = _gameState.GetFieldWidth();
+        float fieldHeight = _gameState.GetFieldHeight();
+        float wallThickness = 0.1f; // epaisseur mur
+
+        // Parent pour organiser
+        GameObject arena = new GameObject("Arena");
+
+        // Top wall
+        GameObject topWall = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        topWall.transform.parent = arena.transform;
+        topWall.transform.position = new Vector3(0, fieldHeight / 2 + wallThickness / 2, 0);
+        topWall.transform.localScale = new Vector3(fieldWidth, wallThickness, 1);
+
+        // Bottom wall
+        GameObject bottomWall = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        bottomWall.transform.parent = arena.transform;
+        bottomWall.transform.position = new Vector3(0, -fieldHeight / 2 - wallThickness / 2, 0);
+        bottomWall.transform.localScale = new Vector3(fieldWidth, wallThickness, 1);
+
+        // Optionnel : Left / Right
+        GameObject leftWall = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        leftWall.transform.parent = arena.transform;
+        leftWall.transform.position = new Vector3(-fieldWidth / 2 - wallThickness / 2, 0, 0);
+        leftWall.transform.localScale = new Vector3(wallThickness, fieldHeight, 1);
+
+        GameObject rightWall = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        rightWall.transform.parent = arena.transform;
+        rightWall.transform.position = new Vector3(fieldWidth / 2 + wallThickness / 2, 0, 0);
+        rightWall.transform.localScale = new Vector3(wallThickness, fieldHeight, 1);
+    }
+
 
 
 
