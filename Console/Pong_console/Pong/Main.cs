@@ -118,6 +118,11 @@ public class MainConsole
     private static PlayerIntention GetPlayer1Intention()
     {
         int move = PlayerIntention.Neutral;
+
+        if (!Console.KeyAvailable)
+        {
+            return new PlayerIntention(move);
+        }
         
         var key = Console.ReadKey(true).Key;
 
@@ -137,6 +142,11 @@ public class MainConsole
     private static PlayerIntention GetPlayer2Intention()
     {
         int move = PlayerIntention.Neutral;
+        
+        if (!Console.KeyAvailable)
+        {
+            return new PlayerIntention(move);
+        }
         
         var key = Console.ReadKey(true).Key;
 
