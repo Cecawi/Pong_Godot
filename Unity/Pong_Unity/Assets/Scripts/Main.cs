@@ -53,7 +53,7 @@ public class Main : MonoBehaviour
         _windowSize = new Vector2(Screen.width, Screen.height);
 
         UpdateVisuals();
-        CreateVisualWalls();
+        //CreateVisualWalls();
     }
 
     private PlayerIntention GetPlayerIntention1()
@@ -172,6 +172,7 @@ public class Main : MonoBehaviour
         _gameState = new GameState();
         _isGameOver = false;
         GameOverUI.SetActive(false);
+        RestartButton.gameObject.SetActive(false);
         Time.timeScale = 1f;
         UpdateVisuals();
     }
