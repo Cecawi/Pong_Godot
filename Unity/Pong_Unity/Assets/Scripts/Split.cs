@@ -7,6 +7,7 @@ public class Split : MonoBehaviour
     public Camera camera2;      // paddle 2
 
     private bool isSplit = false;
+    [SerializeField] private AudioSource samba;
 
     void Start()
     {
@@ -37,6 +38,8 @@ public class Split : MonoBehaviour
             // haut / bas
             camera1.rect = new Rect(0, 0.5f, 1, 0.5f);
             camera2.rect = new Rect(0, 0, 1, 0.5f);
+
+            samba.Play();
         }
         else
         {
