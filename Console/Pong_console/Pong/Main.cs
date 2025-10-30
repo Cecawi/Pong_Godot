@@ -32,7 +32,7 @@ public class MainConsole
         
         _gameState = new GameState();
         
-        while(true)
+        /*while(true)
         {
             _gameState.Update(0.1f, GetPlayer1Intention(), GetPlayer2Intention());
             
@@ -45,6 +45,27 @@ public class MainConsole
                 Console.WriteLine($"Game Over - Score final : {s1} - {s2}");
                 break;
             }
+
+            Thread.Sleep(FrameDelay);
+        }*/
+        
+        while (true)
+        {
+            int p1Move = PlayerIntention.Neutral;
+            int p2Move = PlayerIntention.Neutral;
+
+            if (Console.KeyAvailable)
+            {
+                var key = Console.ReadKey(true).Key;
+
+                if (key == ConsoleKey.Z) p1Move = PlayerIntention.Up;
+                else if (key == ConsoleKey.S) p1Move = PlayerIntention.Down;
+                else if (key == ConsoleKey.UpArrow) p2Move = PlayerIntention.Up;
+                else if (key == ConsoleKey.DownArrow) p2Move = PlayerIntention.Down;
+            }
+
+            _gameState.Update(0.1f, new PlayerIntention(p1Move), new PlayerIntention(p2Move));
+            UpdateVisuals();
 
             Thread.Sleep(FrameDelay);
         }
@@ -115,7 +136,7 @@ public class MainConsole
         return (x, y);
     }
     
-    private static PlayerIntention GetPlayer1Intention()
+    /*private static PlayerIntention GetPlayer1Intention()
     {
         int move = PlayerIntention.Neutral;
 
@@ -161,5 +182,5 @@ public class MainConsole
         }
 
         return new PlayerIntention(move);
-    }
+    }*/
 }

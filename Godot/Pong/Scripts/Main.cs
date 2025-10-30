@@ -53,6 +53,7 @@ public partial class Main : Node2D
 		
 		// initialisation du GameCore
 		_gameState = new GameState();
+		
 		_labelP1 = GetNode<Label>("Label1");
 		_labelP2 = GetNode<Label>("Label2");
 		
