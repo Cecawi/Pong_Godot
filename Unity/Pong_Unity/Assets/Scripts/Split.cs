@@ -10,7 +10,7 @@ public class Split : MonoBehaviour
 
     void Start()
     {
-        // Start: full screen avec la caméra principale
+
         mainCamera.enabled = true;
         camera1.enabled = false;
         camera2.enabled = false;

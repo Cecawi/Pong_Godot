@@ -53,7 +53,7 @@ public class Main : MonoBehaviour
         _windowSize = new Vector2(Screen.width, Screen.height);
 
         UpdateVisuals();
-        //CreateVisualWalls();
+        //CreateVisualWalls(); comment dire que on a pas eu le time
     }
 
     private PlayerIntention GetPlayerIntention1()
@@ -64,7 +64,7 @@ public class Main : MonoBehaviour
         {
             // En mode split (vue FPS) : A et D
             if (Input.GetKey(KeyCode.A)) move = PlayerIntention.Up;      // gauche = monte
-            else if (Input.GetKey(KeyCode.D)) move = PlayerIntention.Down; // droite = descend
+            else if (Input.GetKey(KeyCode.D)) move = PlayerIntention.Down; // droite = descend puisque je n'ai pas change les axes , c'est juste la caméra qui a rotate
         }
         else
         {

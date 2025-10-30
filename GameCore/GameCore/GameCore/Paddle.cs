@@ -2,6 +2,7 @@
 {
     // objectif : représenter une raquette (paddle) pour un joueur
     // gère le déplacement vertical et empêche de sortir du terrain
+    
     public class Paddle
     {
         // attributs
