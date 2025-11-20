@@ -13,6 +13,14 @@ public class Ball
     private float VelocityY { get; set; }
     private const float MaxSpeed = 1.5f;//limite la vitesse max
     public bool BounceSoundFlag;
+    
+    // pour lire donnée et ensuite extraire:
+    
+    public float PosX => X;
+    public float PosY => Y;
+    public float VelX => VelocityX;
+    public float VelY => VelocityY;
+
 
     //"taille" du terrain : 
     private readonly float _fieldWidth;  //x (gauche : -fieldWidth/2 / droite : +fieldWidth/2)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using GameCore;
 
 namespace Pong;
@@ -14,7 +14,7 @@ public class MainConsole
     private float ballX, ballY, paddle1X, paddle1Y, paddle2X, paddle2Y;
 
     private int gx, gy, p1gx, p1gy, p2gx, p2gy;
-    
+    s
     //monde dans GameCore :
     //en haut à gauche : (-0.5, -0.5)
     //en bas à droite : (+0.5, +0.5)
@@ -32,7 +32,7 @@ public class MainConsole
         
         _gameState = new GameState();
         
-        /*while(true)
+        while(true)
         {
             _gameState.Update(0.1f, GetPlayer1Intention(), GetPlayer2Intention());
             
@@ -43,29 +43,10 @@ public class MainConsole
                 var (s1, s2) = _gameState.GetScore();
                 Console.WriteLine();
                 Console.WriteLine($"Game Over - Score final : {s1} - {s2}");
-                break;
+                break
+                  
+
             }
-
-            Thread.Sleep(FrameDelay);
-        }*/
-        
-        while (true)
-        {
-            int p1Move = PlayerIntention.Neutral;
-            int p2Move = PlayerIntention.Neutral;
-
-            if (Console.KeyAvailable)
-            {
-                var key = Console.ReadKey(true).Key;
-
-                if (key == ConsoleKey.Z) p1Move = PlayerIntention.Up;
-                else if (key == ConsoleKey.S) p1Move = PlayerIntention.Down;
-                else if (key == ConsoleKey.UpArrow) p2Move = PlayerIntention.Up;
-                else if (key == ConsoleKey.DownArrow) p2Move = PlayerIntention.Down;
-            }
-
-            _gameState.Update(0.1f, new PlayerIntention(p1Move), new PlayerIntention(p2Move));
-            UpdateVisuals();
 
             Thread.Sleep(FrameDelay);
         }
@@ -136,7 +117,7 @@ public class MainConsole
         return (x, y);
     }
     
-    /*private static PlayerIntention GetPlayer1Intention()
+    private static PlayerIntention GetPlayer1Intention()
     {
         int move = PlayerIntention.Neutral;
 
@@ -182,5 +163,5 @@ public class MainConsole
         }
 
         return new PlayerIntention(move);
-    }*/
+    }
 }

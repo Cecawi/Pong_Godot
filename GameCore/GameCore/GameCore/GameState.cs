@@ -1,7 +1,7 @@
 ﻿namespace GameCore;
 
 
-public class GameState
+public class GameState : IGameState
 {
     //pour ajuster plus facilement lors des tests : 
     private const float BallRadius = 0.015f;
@@ -151,4 +151,12 @@ public class GameState
     {
         return _isGameOver;
     }
+    
+    public float BallX => _b.PosX;
+    public float BallY => _b.PosY;
+    public float BallVX => _b.VelX;
+    public float BallVY => _b.VelY;
+    public float PlayerY => _p1.Y;
+    public float EnemyY => _p2.Y;
+
 }
