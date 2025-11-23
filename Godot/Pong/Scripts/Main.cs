@@ -28,6 +28,8 @@ public partial class Main : Node2D
 	private Label _gameOverLabel;
 	private Button _restartButton;
 	private bool _isGameOver = false;
+	private GameLogger _gameLogger;
+	private PlayerInputReader _inputReader;
 
 	
 	// pour conversion entre monde normalisé et pixels
@@ -53,6 +55,8 @@ public partial class Main : Node2D
 		
 		// initialisation du GameCore
 		_gameState = new GameState();
+		_inputReader = new PlayerInputReader();
+		_gameLogger = new GameLogger(_gameState, _inputReader);
 		
 		_labelP1 = GetNode<Label>("Label1");
 		_labelP2 = GetNode<Label>("Label2");
@@ -83,6 +87,7 @@ public partial class Main : Node2D
 		var p2Intention = GetPlayerIntention2();
 		
 		// mettre à jour la logique du jeu
+		_inputReader.SetIntention(p1Intention.Move);
 		_gameState.Update(deltaTime, p1Intention, p2Intention);
 		
 		if (_gameState.GetBallBounceSoundFlag())
@@ -170,22 +175,32 @@ public partial class Main : Node2D
 	}
 	
 		private void OnGameOver(string winner)
-	{
-		if (_isGameOver) return;
+{
+	if (_isGameOver) return;
 
-		_isGameOver = true;
-		_gameOverLabel.Text = $"Game Over\n{winner} Wins!";
-		_gameOverUI.Visible = true;
-		GetTree().Paused = true;
-	}
-	private void OnRestartPressed()
-	{
-		_gameState = new GameState();   // réinitialiser score, balle, paddles
-		_isGameOver = false;             // réactiver le jeu
-		_gameOverUI.Visible = false;     // cacher UI Game Over
-		GetTree().Paused = false;
-		UpdateVisuals();                 // remettre l’affichage à zéro
-	}
+	_isGameOver = true;
+	_gameOverLabel.Text = $"Game Over\n{winner} Wins!";
+	_gameOverUI.Visible = true;
+	GetTree().Paused = true;
+	
+	// Stop logger and save to desktop
+	string desktopPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
+	string csvPath = System.IO.Path.Combine(desktopPath, "pong_data.csv");
+	_gameLogger.SaveCsv(csvPath);
+	_gameLogger.Stop();
+}
+
+private void OnRestartPressed()
+{
+	// Recreate both GameState and GameLogger
+	_gameState = new GameState();
+	_gameLogger = new GameLogger(_gameState, _inputReader);
+	
+	_isGameOver = false;
+	_gameOverUI.Visible = false;
+	GetTree().Paused = false;
+	UpdateVisuals();
+}
 
 
 }

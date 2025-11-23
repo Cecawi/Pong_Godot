@@ -27,13 +27,18 @@ public class GameLogger
 
         LogFrame(intent.Move);
     }
+    
+    public void Stop()
+    {
+        _timer?.Stop();
+        _timer?.Dispose();
+    }
 
     private void LogFrame(int action)
     {
         string line =
-            _state.X + "," + _state.Y + "," +
-            _state.VelocityY + "," + _state.VelocityY + "," +
-            //player 1 et2
+            _state.BallX + "," + _state.BallY + "," +
+            _state.BallVX + "," + _state.BallVY + "," +
             _state.PlayerY + "," + _state.EnemyY + "," +
             action;
 
