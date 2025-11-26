@@ -29,7 +29,8 @@ public partial class Main : Node2D
 	private Button _restartButton;
 	private bool _isGameOver = false;
 	private GameLogger _gameLogger;
-	private PlayerInputReader _inputReader;
+	private PlayerInputReader _inputReader1;  // Player 1
+	private PlayerInputReader _inputReader2;  // Player 2
 
 	
 	// pour conversion entre monde normalisé et pixels
@@ -55,8 +56,9 @@ public partial class Main : Node2D
 		
 		// initialisation du GameCore
 		_gameState = new GameState();
-		_inputReader = new PlayerInputReader();
-		_gameLogger = new GameLogger(_gameState, _inputReader);
+		_inputReader1 = new PlayerInputReader();
+		_inputReader2 = new PlayerInputReader();
+		_gameLogger = new GameLogger(_gameState, _inputReader1, _inputReader2);
 		
 		_labelP1 = GetNode<Label>("Label1");
 		_labelP2 = GetNode<Label>("Label2");
@@ -87,7 +89,8 @@ public partial class Main : Node2D
 		var p2Intention = GetPlayerIntention2();
 		
 		// mettre à jour la logique du jeu
-		_inputReader.SetIntention(p1Intention.Move);
+		_inputReader1.SetIntention(p1Intention.Move);
+		_inputReader2.SetIntention(p2Intention.Move);
 		_gameState.Update(deltaTime, p1Intention, p2Intention);
 		
 		if (_gameState.GetBallBounceSoundFlag())
@@ -151,7 +154,7 @@ public partial class Main : Node2D
 		var (ballX, ballY) = _gameState.GetBallPosition();
 		_ballNode.Position = ToPixels(ballX, ballY);
 		
-		// mettre à l’échelle selon le monde normalisé
+		// mettre à l'échelle selon le monde normalisé
 		var ballRadiusNorm = _gameState.GetBallRadius();
 		float pixelDiameter = ballRadiusNorm * 2 * _windowSize.Y;
 		_ballSprite.Scale = new Vector2(pixelDiameter / _ballSprite.Texture.GetSize().X, pixelDiameter / _ballSprite.Texture.GetSize().Y);
@@ -162,7 +165,7 @@ public partial class Main : Node2D
 		_paddle1Node.Position = ToPixels(p1X, p1Y);
 		_paddle2Node.Position = ToPixels(p2X, p2Y);
 		
-		// mise à l’échelle selon le monde normalisé
+		// mise à l'échelle selon le monde normalisé
 		var (p1W, p1H) = _gameState.GetPaddle1Size();
 		var (p2W, p2H) = _gameState.GetPaddle2Size();
 		_paddle1Sprite.Scale = new Vector2(p1W * _windowSize.X / _paddle1Sprite.Texture.GetSize().X, p1H * _windowSize.Y / _paddle1Sprite.Texture.GetSize().Y);
@@ -174,33 +177,33 @@ public partial class Main : Node2D
 
 	}
 	
-		private void OnGameOver(string winner)
-{
-	if (_isGameOver) return;
+	private void OnGameOver(string winner)
+	{
+		if (_isGameOver) return;
 
-	_isGameOver = true;
-	_gameOverLabel.Text = $"Game Over\n{winner} Wins!";
-	_gameOverUI.Visible = true;
-	GetTree().Paused = true;
-	
-	// Stop logger and save to desktop
-	string desktopPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
-	string csvPath = System.IO.Path.Combine(desktopPath, "pong_data.csv");
-	_gameLogger.SaveCsv(csvPath);
-	_gameLogger.Stop();
-}
+		_isGameOver = true;
+		_gameOverLabel.Text = $"Game Over\n{winner} Wins!";
+		_gameOverUI.Visible = true;
+		GetTree().Paused = true;
+		
+		// Stop logger and save to desktop
+		string desktopPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
+		string csvPath = System.IO.Path.Combine(desktopPath, "pong_data_test.csv");
+		_gameLogger.SaveCsv(csvPath);
+		_gameLogger.Stop();
+	}
 
-private void OnRestartPressed()
-{
-	// Recreate both GameState and GameLogger
-	_gameState = new GameState();
-	_gameLogger = new GameLogger(_gameState, _inputReader);
-	
-	_isGameOver = false;
-	_gameOverUI.Visible = false;
-	GetTree().Paused = false;
-	UpdateVisuals();
-}
-
-
+	private void OnRestartPressed()
+	{
+		// Recreate both GameState and GameLogger
+		_gameState = new GameState();
+		_inputReader1 = new PlayerInputReader();
+		_inputReader2 = new PlayerInputReader();
+		_gameLogger = new GameLogger(_gameState, _inputReader1, _inputReader2);
+		
+		_isGameOver = false;
+		_gameOverUI.Visible = false;
+		GetTree().Paused = false;
+		UpdateVisuals();
+	}
 }
