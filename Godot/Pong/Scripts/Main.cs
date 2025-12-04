@@ -31,6 +31,11 @@ public partial class Main : Node2D
 	private GameLogger _gameLogger;
 	private PlayerInputReader _inputReader1;  // Player 1
 	private PlayerInputReader _inputReader2;  // Player 2
+	
+	//agent IA pour le joueur 1
+	private AIInputReader _aiInputReader;
+	private bool _useAI = true;//true = IA contrôle joueur 1, false = clavier
+	private float _lastDeltaTime = 0f;
 
 	
 	// pour conversion entre monde normalisé et pixels
@@ -60,6 +65,18 @@ public partial class Main : Node2D
 		_inputReader2 = new PlayerInputReader();
 		_gameLogger = new GameLogger(_gameState, _inputReader1, _inputReader2);
 		
+		//initialisation de l'agent IA pour le joueur 1
+		if(_useAI)
+		{
+			_aiInputReader = new AIInputReader(inputSize: 7, numClasses: 3, learningRate: 0.01f);
+			string csvPath = @"C:\Users\yecel\Desktop\ESGI - 4A\T1\Machine Learning\Pong_Joueur_Artificiel\pong_data_test_1.csv";
+			_aiInputReader.LoadAndTrain(csvPath, epochs: 1000);
+			GD.Print("Agent IA entraîné avec succès");
+			GD.Print("classe 0 : haut (-1)");
+			GD.Print("classe 1 : neutre (0)");
+			GD.Print("classe 2 : bas (1)");
+		}
+		
 		_labelP1 = GetNode<Label>("Label1");
 		_labelP2 = GetNode<Label>("Label2");
 		
@@ -83,6 +100,19 @@ public partial class Main : Node2D
 	public override void _Process(double delta)
 	{
 		float deltaTime = (float)delta;
+		_lastDeltaTime = deltaTime;
+
+		//mettre à jour l'état du jeu pour l'IA
+		if(_useAI && _aiInputReader != null)
+		{
+			_aiInputReader.SetGameState
+			(
+				_gameState.BallX, _gameState.BallY,
+				_gameState.BallVX, _gameState.BallVY,
+				_gameState.PlayerY, _gameState.EnemyY,
+				deltaTime
+			);
+		}
 
 		// récupérer les intentions des joueurs
 		var p1Intention = GetPlayerIntention1();
@@ -121,6 +151,15 @@ public partial class Main : Node2D
 	
 	private PlayerIntention GetPlayerIntention1()
 	{
+		//si l'IA est activée, utiliser la prédiction de l'agent
+		if(_useAI && _aiInputReader != null)
+		{
+			int aiMove = _aiInputReader.ReadIntention();
+			GD.Print("Classe prédite : " + aiMove);
+			return new PlayerIntention(aiMove);
+		}
+		
+		//sinon, utiliser le clavier
 		int move = PlayerIntention.Neutral;
 
 		if (Input.IsActionPressed("p1_up")) move = PlayerIntention.Up;
