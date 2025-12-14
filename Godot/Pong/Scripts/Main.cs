@@ -43,7 +43,7 @@ public partial class Main : Node2D
 	private CheckButton _checkUseAI;
 	private OptionButton _optAgentSelection;
 	private Button _btnPlay;
-	private string _agentsFolderPath = @"C:\Users\yecel\Desktop\ESGI - 4A\T1\Machine Learning\Pong_Joueur_Artificiel\AgentsIA";
+	private string _agentsFolderPath = "res://Scripts/AgentIA"; // Chemin Godot relatif
 	private System.Collections.Generic.List<string> _agentFiles = new System.Collections.Generic.List<string>();
 	
 	private bool _isGameStarted = false;
@@ -138,21 +138,29 @@ public partial class Main : Node2D
 		uiContainer.AddChild(_btnPlay);
 	}
 
-	private void PopulateAgentList()
+private void PopulateAgentList()
+{
+	_optAgentSelection.Clear();
+	_agentFiles.Clear();
+
+	using var dir = Godot.DirAccess.Open(_agentsFolderPath);
+	
+	if( dir != null)
 	{
-		_optAgentSelection.Clear();
-		_agentFiles.Clear();
-
-		if( System.IO.Directory.Exists(_agentsFolderPath) )
+		//string[] files = System.IO.Directory.GetFiles(_agentsFolderPath, "*.json");
+		dir.ListDirBegin();
+	
+		string fileName = dir.GetNext();
+	
+		while (fileName != "")
 		{
-			string[] files = System.IO.Directory.GetFiles(_agentsFolderPath, "*.json");
-			foreach( string file in files )
+			if (!dir.CurrentIsDir() && fileName.EndsWith(".json"))
 			{
-				string fileName = System.IO.Path.GetFileNameWithoutExtension(file);
-				_agentFiles.Add(file);
+				string fullPath = _agentsFolderPath + "/" + fileName;
+				_agentFiles.Add(fullPath);
 
-				//formatage : 1ère lettre majuscule et _ en espace
-				string formattedName = fileName.Replace("_", " ");
+				string nameWithoutExt = System.IO.Path.GetFileNameWithoutExtension(fileName);
+				string formattedName = nameWithoutExt.Replace("_", " ");
 				if( formattedName.Length > 0 )
 				{
 					formattedName = char.ToUpper(formattedName[0]) + formattedName.Substring(1);
@@ -160,13 +168,37 @@ public partial class Main : Node2D
 				
 				_optAgentSelection.AddItem(formattedName);
 			}
-		}
-
-		if( _agentFiles.Count > 0 )
-		{
-			_optAgentSelection.Select(0);
+			fileName = dir.GetNext(); // Passer au fichier suivant
 		}
 	}
+	else
+	{
+		// Afficher un message d'erreur si le dossier n'est pas trouvé
+		GD.PrintErr($"Erreur: Impossible d'ouvrir le répertoire des agents: {_agentsFolderPath}");
+	}
+	// Code C# commenté lié à System.IO.Directory a été retiré pour corriger la syntaxe.
+	/*
+	//foreach( string file in files )
+	//{
+		//string fileName = System.IO.Path.GetFileNameWithoutExtension(file);
+		//_agentFiles.Add(file);
+	//
+		////formatage : 1ère lettre majuscule et _ en espace
+		//string formattedName = fileName.Replace("_", " ");
+		//if( formattedName.Length > 0 )
+		//{
+			//formattedName = char.ToUpper(formattedName[0]) + formattedName.Substring(1);
+		//}
+		//
+		//_optAgentSelection.AddItem(formattedName);
+	//}
+	*/
+
+	if( _agentFiles.Count > 0 )
+	{
+		_optAgentSelection.Select(0);
+	}
+}
 
 	private void OnUseAIToggled(bool pressed)
 	{
@@ -256,38 +288,74 @@ public partial class Main : Node2D
 		UpdatePlayButtonState();
 	}
 
-	private void LoadSelectedAgent()
-	{
-		//si la liste est vide, on ne fait rien
-		if( _agentFiles.Count == 0 )
-		{
-			return;
-		}
+	//private void LoadSelectedAgent()
+	//{
+		////si la liste est vide, on ne fait rien
+		//if( _agentFiles.Count == 0 )
+		//{
+			//return;
+		//}
+//
+		//int index = _optAgentSelection.Selected;
+		//
+		//if( index >= 0 && index < _agentFiles.Count )
+		//{
+			//string jsonPath = _agentFiles[index];
+			//
+			////nettoyer ancienne ia si existe
+			//_aiInputReader = null; 
+			//
+			////créer nouvelle instance
+			//_aiInputReader = new AIInputReader(inputSize : 5, numClasses : 3, learningRate : 0.01f);
+			//
+			//try 
+			//{
+				//_aiInputReader.LoadFromJSON(jsonPath);
+				//GD.Print("Agent IA chargé : " + jsonPath);
+			//}
+			//catch ( System.Exception e )
+			//{
+				//GD.PrintErr("Erreur chargement IA : " + e.Message);
+			//}
+		//}
+	//}
+	
 
-		int index = _optAgentSelection.Selected;
-		
-		if( index >= 0 && index < _agentFiles.Count )
-		{
-			string jsonPath = _agentFiles[index];
-			
-			//nettoyer ancienne ia si existe
-			_aiInputReader = null; 
-			
-			//créer nouvelle instance
-			_aiInputReader = new AIInputReader(inputSize : 5, numClasses : 3, learningRate : 0.01f);
-			
-			try 
-			{
-				_aiInputReader.LoadFromJSON(jsonPath);
-				GD.Print("Agent IA chargé : " + jsonPath);
-			}
-			catch ( System.Exception e )
-			{
-				GD.PrintErr("Erreur chargement IA : " + e.Message);
-			}
-		}
+private void LoadSelectedAgent()
+{
+	// si la liste est vide, on ne fait rien
+	if( _agentFiles.Count == 0 )
+	{
+		return;
 	}
 	
+	int index = (int)_optAgentSelection.Selected;
+	
+	if( index >= 0 && index < _agentFiles.Count )
+	{
+		string jsonPath = _agentFiles[index];
+		
+		// 🚨 NOUVEAU: Convertir le chemin Godot (res://) en chemin système réel (C:/...)
+		string systemFilePath = Godot.ProjectSettings.GlobalizePath(jsonPath); 
+		
+		// netoyer ancienne ia si existe
+		_aiInputReader = null; 
+		
+		// créer nouvelle instance
+		_aiInputReader = new AIInputReader(inputSize : 5, numClasses : 3, learningRate : 0.01f);
+		
+		try
+		{
+			_aiInputReader.LoadFromJSON(systemFilePath); // Utiliser le chemin réel
+			GD.Print("Agent IA chargé : " + systemFilePath);
+		}
+		catch ( System.Exception e )
+		{
+			GD.PrintErr("Erreur chargement IA : " + e.Message);
+		}
+	}
+}
+
 	public override void _Process(double delta)
 	{
 		//gestion pause (espace)
@@ -444,9 +512,30 @@ public partial class Main : Node2D
 		GetTree().Paused = true;
 		
 		//stop logger and save to desktop
+		//string desktopPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
+		//string csvPath = System.IO.Path.Combine(desktopPath, "pong_data_test.csv");
+		//_gameLogger.SaveCsv(csvPath);
+		
+		if (_useAI) 
+	{
+		// 2. Créer un nom de fichier unique basé sur la date et l'heure
+		string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+		string fileName = $"pong_data_session_test_{timestamp}.csv";
+
+		// 3. Déterminer le chemin du Bureau (ou un autre emplacement stable et accessible par Python)
 		string desktopPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
-		string csvPath = System.IO.Path.Combine(desktopPath, "pong_data_test.csv");
-		_gameLogger.SaveCsv(csvPath);
+		string csvPath = System.IO.Path.Combine(desktopPath, fileName);
+		
+		try
+		{
+			_gameLogger.SaveCsv(csvPath);
+			GD.Print($"Données de test de l'IA enregistrées sur le Bureau : {csvPath}");
+		}
+		catch (System.Exception e)
+		{
+			GD.PrintErr($"Erreur lors de la sauvegarde du fichier CSV: {e.Message}");
+		}
+	}
 		_gameLogger.Stop();
 	}
 
